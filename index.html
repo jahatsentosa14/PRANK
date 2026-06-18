@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Secret Message</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        :root {
+            /* Light Mode Colors */
+            --glass-bg: rgba(255, 255, 255, 0.65); /* Lebih pekat biar kelihatan di background putih */
+            --glass-border: rgba(0, 0, 0, 0.1); /* Border abu-abu tipis */
+            --text-color: #000000; /* Teks Hitam */
+            --btn-color: #000000;
+            --btn-text: #ffffff;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+            background: #f2f2f7; /* Background iOS Light Mode (Abu muda) */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- BACKGROUND LIQUID (LIGHT THEME) --- */
+        .liquid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+
+        /* Warna blob disesuaikan biar cocok di background terang */
+        .blob-1 { top: -10%; left: -10%; width: 60vw; height: 60vw; background: #FF2E63; animation-duration: 12s; }
+        .blob-2 { bottom: -10%; right: -10%; width: 50vw; height: 50vw; background: #08D9D6; animation-duration: 15s; }
+        .blob-3 { top: 40%; left: 30%; width: 40vw; height: 40vw; background: #4361EE; animation-duration: 9s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(20px, 40px) rotate(10deg); }
+        }
+
+        /* --- GLASS CARD UTAMA --- */
+        .glass-card {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 400px;
+            min-height: 550px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px); /* Blur dikurangi sedikit biar lebih tajam */
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 35px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            padding: 30px 25px 35px 25px;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        /* --- 1 VIDEO AREA --- */
+        .logo-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        .video-wrapper {
+            width: 140px;
+            height: auto;
+            position: relative;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 12px;
+            object-fit: contain;
+            
+            /* --- USER REQUEST: NORMAL BLEND MODE --- */
+            mix-blend-mode: normal; 
+            /* ------------------------------------ */
+        }
+
+        /* --- JAM & TANGGAL --- */
+        .time-area {
+            text-align: center;
+            margin-bottom: 40px;
+            flex-shrink: 0;
+        }
+
+        .time-display {
+            font-size: 3.2rem;
+            font-weight: 200;
+            letter-spacing: -1px;
+            opacity: 0.9;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .date-display {
+            font-size: 0.85rem;
+            text-transform: capitalize;
+            opacity: 0.5;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        /* --- KONTEN UTAMA --- */
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        .message-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            line-height: 1.2;
+        }
+
+        .message-sub {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.7;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .emoji-large {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        /* --- TOMBOL --- */
+        .btn-main {
+            width: 100%;
+            padding: 16px;
+            border-radius: 30px;
+            border: none;
+            background: var(--btn-color);
+            color: var(--btn-text);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        .btn-main:active {
+            transform: scale(0.96);
+        }
+
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* --- WATERMARK --- */
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.75rem;
+            color: rgba(0,0,0,0.2); /* Warna watermark disesuaikan jadi abu gelap */
+            z-index: 5;
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        @media (max-width: 360px) {
+            .time-display { font-size: 2.8rem; }
+            .message-title { font-size: 1.5rem; }
+            .video-wrapper { width: 120px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Liquid (Light Theme) -->
+    <div class="liquid-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="glass-card">
+        
+        <!-- 1 VIDEO AREA -->
+        <div class="logo-area">
+            <div class="video-wrapper">
+                <video id="mainVideo" autoplay muted playsinline preload="auto">
+                    <source src="https://i.imgur.com/a/5oWfGD3.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+
+        <!-- Jam & Tanggal -->
+        <div class="time-area">
+            <div class="time-display" id="clock">00:00</div>
+            <div class="date-display" id="date">Loading...</div>
+        </div>
+
+        <!-- HALAMAN 1: PESAN RAHASIA -->
+        <div id="page-secret" class="content-area">
+            <div class="emoji-large">💌</div>
+            <h1 class="message-title">Ada pesan rahasia nih</h1>
+            <p class="message-sub">Jangan dibuka sama orang lain ya.</p>
+            <button class="btn-main" onclick="showPrank()">Buka Pesan</button>
+        </div>
+
+        <!-- HALAMAN 2: PRANK REVEAL -->
+        <div id="page-prank" class="content-area hidden">
+            <div class="emoji-large">🤡</div>
+            <h1 class="message-title" style="color: #FF2E63;">Selamat Kamu Kena Prank!</h1>
+            <p class="message-sub">
+                Baju kamu aman kok di dalam box.<br>
+                Jangan lupa latihan ya!
+            </p>
+            <button class="btn-main" onclick="location.reload()">OK</button>
+        </div>
+
+    </div>
+
+    <!-- Watermark -->
+    <div class="watermark">Made With ❤️ by Villain</div>
+
+    <script>
+        // --- 1. PERBAIKAN LOOP VIDEO (Anti Glitch) ---
+        const video = document.getElementById('mainVideo');
+
+        video.addEventListener('ended', () => {
+            video.currentTime = 0;
+            video.play().catch(e => console.log("Autoplay blocked until interaction"));
+        });
+
+        // Fallback Play
+        document.body.addEventListener('click', () => {
+            if(video.paused) {
+                video.play();
+            }
+        }, {once: true});
+
+        // --- 2. LOGIC JAM & TANGGAL ---
+        function updateDateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('clock').innerText = `${hours}:${minutes}`;
+
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            const dateStr = now.toLocaleDateString('id-ID', options);
+            document.getElementById('date').innerText = dateStr;
+        }
+
+        updateDateTime();
+        setInterval(updateDateTime, 1000 * 60);
+
+        // --- 3. FUNGSI PRANK ---
+        function showPrank() {
+            // Efek Suara
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } catch(e) {}
+
+            const secretPage = document.getElementById('page-secret');
+            const prankPage = document.getElementById('page-prank');
+
+            secretPage.classList.add('hidden');
+            prankPage.classList.remove('hidden');
+            prankPage.classList.add('fade-in');
+        }
+    </script>
+</body>
+</html>
